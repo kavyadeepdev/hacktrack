@@ -69,47 +69,47 @@ existing file. Owns `src/app/workspace/**`,
 `problem_statements`, `resources`, `submissions`, `outcomes`, each with
 loose `hackathonId: string`).
 
-- [ ] **B1 — Deadlines, multiple per hackathon (PAY-15).**
+- [x] **B1 — Deadlines, multiple per hackathon (PAY-15).**
   `deadline-form.tsx` + `deadline-list.tsx` backed by the `deadlines`
   table (`hackathonId`, title, due date, type); CRUD inside the workspace
   Resources/Overview tab.
-- [ ] **B2 — Reminders before deadlines (PAY-16).**
+- [x] **B2 — Reminders before deadlines (PAY-16).**
   `reminder-banner.tsx` (due-soon/overdue strip computed in
   `src/lib/deadlines/reminders.ts`) + `src/app/api/reminders/route.ts`
   upcoming-deadline feed.
-- [ ] **B3 — Ideation chat with checkboxes (PAY-17).** `chat-window.tsx`
+- [x] **B3 — Ideation chat with checkboxes (PAY-17).** `chat-window.tsx`
   with multiple `idea-line.tsx` rows (ideate + feature suggestions), each
   with `idea-checkbox.tsx`; `idea-group.tsx` groups rows into Implemented
   / Dropped. Stored in the `ideas` table with a status enum.
-- [ ] **B4 — Video link upload (PAY-18).** `video-link-input.tsx` saving
+- [x] **B4 — Video link upload (PAY-18).** `video-link-input.tsx` saving
   the demo video URL to the `submissions` row; render an embedded player
   when the host allows it.
-- [ ] **B5 — PPT link upload (PAY-19).** `ppt-link-input.tsx`, same
+- [x] **B5 — PPT link upload (PAY-19).** `ppt-link-input.tsx`, same
   `submissions` row pattern as B4.
-- [ ] **B6 — Problem statements (PAY-20).**
+- [x] **B6 — Problem statements (PAY-20).**
   `problem-statement-card.tsx` + `problem-statement-form.tsx` on the
   `problem_statements` table (title, body, source URL).
-- [ ] **B7 — Resources link library (PAY-21).** `resource-list.tsx` +
+- [x] **B7 — Resources link library (PAY-21).** `resource-list.tsx` +
   `resource-form.tsx` (docs, APIs, datasets) with title/URL/tag, filterable
   by tag.
-- [ ] **B8 — GitHub link upload (PAY-22).** `github-link-input.tsx`
+- [x] **B8 — GitHub link upload (PAY-22).** `github-link-input.tsx`
   with repo-URL validation, saved to the `submissions` row; feeds B9.
-- [ ] **B9 — Tech-stack detection from GitHub (PAY-23).**
+- [x] **B9 — Tech-stack detection from GitHub (PAY-23).**
   `src/app/api/techstack/detect/route.ts` fetches the repo's language
   breakdown (GitHub REST, no token for public repos) and maps it via
   `src/lib/techstack/mapping.ts`; display in `tech-stack-badges.tsx`.
-- [ ] **B10 — Result win/lose + prize money (PAY-24).**
+- [x] **B10 — Result win/lose + prize money (PAY-24).**
   `result-form.tsx` + `prize-input.tsx` writing the `outcomes` row
   (result enum, prize text/amount).
-- [ ] **B11 — Personalized notes (PAY-25).** `notes-editor.tsx` for
+- [x] **B11 — Personalized notes (PAY-25).** `notes-editor.tsx` for
   ongoing notes + retrospective learnings (what learnt, what worked) on the
   `outcomes` row.
-- [ ] **B12 — LLM parse: paste text/URL to draft (PAY-26).**
+- [x] **B12 — LLM parse: paste text/URL to draft (PAY-26).**
   `paste-ingest-dialog.tsx` + `url-ingest-form.tsx` POST to
   `src/app/api/ai/parse/route.ts` (prompt builders in `src/lib/ai/`);
   returns draft JSON shaped like `NewHackathon` + extras, offered as
   copy-into-form via clipboard/query-param (never edits Track A files).
-- [ ] **B13 — Submission checklist + `.ics` export (PAY-27, `added`).**
+- [x] **B13 — Submission checklist + `.ics` export (PAY-27, `added`).**
   `submission-checklist.tsx` (video/PPT/repo/result completeness) and
   `src/lib/deadlines/ics-export.ts` generating a downloadable calendar file
   for all deadlines.
