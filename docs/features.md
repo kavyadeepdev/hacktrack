@@ -56,6 +56,10 @@ tracker UI (`src/app/hackathons/**`, `src/components/hackathon/*`,
   `src/app/api/teams/[teamId]/invite/route.ts` issues/rotates codes,
   `src/lib/teams/invites.ts` validates + expires them,
   `team_invites` + `access_audit` tables record joins and role changes.
+- [ ] **A10 — Global desktop app shell (PAY-32).** Calendly-style left
+  sidebar + full-width content frame app-wide (Track B already ships the
+  workspace-local 3-pane shell). Owned files: `src/app/layout.tsx`,
+  `src/components/layout/*`. Owner: Shrihari, branch `person/shrihari`.
 
 ## Track B — Kavyadeep (`track-b`, branch `person/kavyadeep`)
 
@@ -113,6 +117,46 @@ loose `hackathonId: string`).
   `submission-checklist.tsx` (video/PPT/repo/result completeness) and
   `src/lib/deadlines/ics-export.ts` generating a downloadable calendar file
   for all deadlines.
+
+## Track B — Schedule views, Calendly design language (`track-b`, branch `person/kavyadeep`)
+
+Calendly-inspired schedule experience for deadlines: week-grid calendar
+(Image 1), grouped list (Image 2), detail/edit panel + activity timeline
+(Image 2 right, Image 3). Spec lives in `docs/design.md`. All greenfield
+under `src/app/workspace/[hackathonId]/schedule/**` +
+`src/components/workspace/**` + `src/components/reminders/calendar-*.tsx` —
+never touches Track A or frozen files.
+
+- [x] **B14 — Design language spec (docs/design.md) (PAY-28).** Calendly tokens
+  (blue #006BFF / navy #0A2540, light borders, soft selected blue),
+  layout patterns (left rail, center list/calendar, right detail), view
+  rules (calendar week-grid, list grouped by day, detail/edit panel),
+  mobile-first behavior. Owned files: `docs/design.md`.
+- [x] **B15 — Workspace shell + schedule overview (PAY-29).** `layout.tsx` tab shell
+  for `/workspace/[hackathonId]` (Overview / Schedule / Resources /
+  Submissions / Outcomes / Ideate) + `schedule/page.tsx` overview with
+  search, type filter, view switcher (calendar | list), export `.ics`.
+  Owned files: `src/app/workspace/[hackathonId]/layout.tsx`,
+  `src/app/workspace/[hackathonId]/page.tsx`,
+  `src/app/workspace/[hackathonId]/schedule/page.tsx`,
+  `src/components/workspace/*`, `src/lib/workspace/*`.
+- [x] **B16 — Deadlines calendar, list + detail/edit views (PAY-30).**
+  `calendar-week.tsx` (7-day grid, week nav, today, select day),
+  `schedule-list.tsx` (grouped by day, selected card, join/manage CTA),
+  `deadline-detail.tsx` (detail/edit panel: reschedule via
+  `datetime-local`, type, notes, delete with confirm, activity timeline).
+  Owned files: `src/components/reminders/calendar-*.tsx`,
+  `src/app/workspace/[hackathonId]/schedule/calendar/page.tsx`,
+  `src/app/workspace/[hackathonId]/schedule/list/page.tsx`,
+  `src/app/workspace/[hackathonId]/schedule/[deadlineId]/page.tsx`,
+  `src/components/workspace/schedule-*.tsx`.
+- [x] **B17 — Remaining workspace pages in design language (PAY-31).** Resources
+  (`problem statements` + link library with search/tag filter), Submissions
+  (video/PPT/GitHub + tech badges + checklist), Outcomes (result/prize +
+  notes), each with list + detail/edit panel reusing B16 patterns.
+  Owned files: `src/app/workspace/[hackathonId]/resources/page.tsx`,
+  `src/app/workspace/[hackathonId]/submissions/page.tsx`,
+  `src/app/workspace/[hackathonId]/outcomes/page.tsx`.
 
 ## Cross-cutting flows (no shared files)
 
