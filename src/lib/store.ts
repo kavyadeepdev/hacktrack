@@ -33,6 +33,12 @@ function persist(rows: Hackathon[]) {
   }
 }
 
+export type HackathonPatch = Partial<Hackathon> & {
+  /** Optional extras owned by sibling tracks (not in core Hackathon type). */
+  paymentConfirmed?: boolean;
+  registrationUrl?: string | null;
+};
+
 export function useHackathons() {
   const [hackathons, setHackathons] = useState<Hackathon[]>([]);
   const [hydrated, setHydrated] = useState(false);
@@ -64,7 +70,7 @@ export function useHackathons() {
     return row;
   }, []);
 
-  const update = useCallback((id: string, patch: Partial<Hackathon>) => {
+  const update = useCallback((id: string, patch: HackathonPatch) => {
     setHackathons((prev) => {
       const next = prev.map((h) =>
         h.id === id
@@ -84,5 +90,15 @@ export function useHackathons() {
     });
   }, []);
 
-  return { hackathons, hydrated, add, update, remove };
+  return {
+    hackathons,
+    hydrated,
+    add,
+    update,
+    remove,
+    // Aliases matching the lifecycle wiring contract on the detail page.
+    addHackathon: add,
+    updateHackathon: update,
+    deleteHackathon: remove,
+  };
 }

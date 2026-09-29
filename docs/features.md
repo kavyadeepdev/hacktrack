@@ -16,43 +16,43 @@ tracker UI (`src/app/hackathons/**`, `src/components/hackathon/*`,
 `src/app/api/registration/**`, `src/components/teams|lifecycle|timeline|access/**`,
 `src/lib/teams|access|registration|timeline/**`, `src/db/teams-schema.ts`.
 
-- [ ] **A1 — Add / edit / list hackathons (PAY-6).** Extend the existing
+- [x] **A1 — Add / edit / list hackathons (PAY-6).** Extend the existing
   tracker list (`src/app/hackathons/page.tsx`), create form
   (`src/app/hackathons/new/page.tsx`) and detail page
   (`src/app/hackathons/[id]/page.tsx`) with name, organizer, location,
   remote flag, start/end dates and event URL. Persist via
   `useHackathons()` (`src/lib/store.ts`) using the `Hackathon` shape in
   `src/lib/types.ts`.
-- [ ] **A2 — Core event links on the tracker form (PAY-7).** Add event URL
+- [x] **A2 — Core event links on the tracker form (PAY-7).** Add event URL
   + registration URL fields to `hackathon-form.tsx` with URL validation,
   rendered as tappable links on the card and detail page.
-- [ ] **A3 — Team formation, creation, invites (PAY-8).** New routes
+- [x] **A3 — Team formation, creation, invites (PAY-8).** New routes
   `src/app/teams/` (list, new, `[teamId]` detail) + `team-card.tsx`,
   `team-form.tsx`, `member-list.tsx`, `invite-dialog.tsx`. Tables
   `teams`, `team_members` in `src/db/teams-schema.ts`, keyed by own ids
   plus a loose `hackathonId: string` (never edit the core `hackathons` table).
-- [ ] **A4 — Role-based access (PAY-9).** Roles (owner / member / viewer)
+- [x] **A4 — Role-based access (PAY-9).** Roles (owner / member / viewer)
   in `src/lib/access/roles.ts`, permission checks in
   `permissions.ts`/`guards.ts`, `role-guard.tsx` wrapper for protected UI,
   `role-badge.tsx` for display, member add/change-role/remove API in
   `src/app/api/teams/[teamId]/members/route.ts`.
-- [ ] **A5 — Payment-checkbox gate (PAY-10).** A `paymentConfirmed`
+- [x] **A5 — Payment-checkbox gate (PAY-10).** A `paymentConfirmed`
   boolean per hackathon (`src/lib/registration/payment.ts`,
   `src/app/api/registration/route.ts`). Unchecked = minimal pre-hackathon
   view; checked = reveals the full fieldset AND a deep link to
   `/workspace/[hackathonId]` (Track B fields live only behind that link,
   never inlined here).
-- [ ] **A6 — Delete hackathon, pre-event only (PAY-11).**
+- [x] **A6 — Delete hackathon, pre-event only (PAY-11).**
   `delete-hackathon-dialog.tsx` with confirm step; deletion blocked once
   payment is confirmed or the event is over (guard in the registration API).
-- [ ] **A7 — Post-hackathon timeline chart (PAY-12).** New `/timeline`
+- [x] **A7 — Post-hackathon timeline chart (PAY-12).** New `/timeline`
   route rendering `timeline-chart.tsx` + `timeline-entry.tsx` from
   `src/lib/timeline/queries.ts`: chronological accumulation of attended
   hackathons with details intact, linking out to `/workspace/[id]`.
-- [ ] **A8 — Dashboard list + detail shell (PAY-13).** `src/app/page.tsx`
+- [x] **A8 — Dashboard list + detail shell (PAY-13).** `src/app/page.tsx`
   stats/up-next/recent; `[id]` page hosts status/result editing and the
   workspace entry link (Contract: Kavyadeep never edits these files).
-- [ ] **A9 — Invite codes with expiry + access audit (PAY-14, `added`).**
+- [x] **A9 — Invite codes with expiry + access audit (PAY-14, `added`).**
   `src/app/api/teams/[teamId]/invite/route.ts` issues/rotates codes,
   `src/lib/teams/invites.ts` validates + expires them,
   `team_invites` + `access_audit` tables record joins and role changes.
