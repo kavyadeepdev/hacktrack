@@ -1,0 +1,10 @@
+{
+  "name": "HackTrack",
+  "short_name": "HackTrack",
+  "description": "Track hackathons: review, apply, attend, record results and learnings.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#09090b",
+  "icons": []
+}
