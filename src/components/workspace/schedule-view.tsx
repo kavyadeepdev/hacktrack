@@ -27,9 +27,9 @@ interface ScheduleViewProps {
 }
 
 /**
- * B15/B16 — schedule experience: toolbar (search, type filter, view
- * switcher, export), stats strip, calendar/list content, detail panel,
- * add form. Shared by schedule/, schedule/calendar, schedule/list.
+ * B15/B16 (desktop-first) — 3-pane schedule experience like the reference
+ * screens: left control rail (search, filter, export, stats), center
+ * calendar/list, right sticky detail/edit panel. Stacks below `xl`.
  */
 export function ScheduleView({
   hackathonId,
@@ -66,131 +66,159 @@ export function ScheduleView({
     downloadIcs(`${hackathonId}-deadlines`, buildIcs(filtered));
   }
 
+  function clearFilters() {
+    setQuery("");
+    setTypeFilter("all");
+    setDayFilter(null);
+  }
+
   return (
     <div className="space-y-4">
       <ReminderBanner deadlines={deadlines} />
 
-      <div className="rounded-lg border bg-card p-3">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-          <div className="relative flex-1">
-            <Input
-              aria-label="Search deadlines"
-              placeholder="Search meetings"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-            />
-          </div>
-          <div className="flex gap-2">
-            <Select
-              aria-label="Filter by type"
-              value={typeFilter}
-              onChange={(e) =>
-                setTypeFilter(e.target.value as "all" | DeadlineType)
-              }
-              options={[
-                { value: "all", label: "Filter" },
-                ...DEADLINE_TYPE_OPTIONS,
-              ]}
-              className="min-h-[44px]"
-            />
-            <Button
-              variant="outline"
-              className="min-h-[44px]"
-              disabled={filtered.length === 0}
-              onClick={handleExport}
+      <div className="flex h-[44px] items-center justify-between gap-2">
+        <h2 className="text-xl font-bold tracking-tight">Schedule</h2>
+        <div
+          role="group"
+          aria-label="View switcher"
+          className="flex rounded-md border p-0.5"
+        >
+          {(["calendar", "list"] as const).map((v) => (
+            <button
+              key={v}
+              type="button"
+              aria-pressed={view === v}
+              onClick={() => setView(v)}
+              className={cn(
+                "inline-flex h-[40px] items-center rounded px-5 text-sm font-medium capitalize",
+                view === v
+                  ? "bg-[#006BFF]/10 text-[#006BFF]"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
             >
-              Export meetings
-            </Button>
-          </div>
+              {v}
+            </button>
+          ))}
         </div>
-        <div className="mt-2 flex items-center justify-between gap-2">
-          <div
-            role="group"
-            aria-label="View switcher"
-            className="flex rounded-md border p-0.5"
-          >
-            {(["calendar", "list"] as const).map((v) => (
-              <button
-                key={v}
-                type="button"
-                aria-pressed={view === v}
-                onClick={() => setView(v)}
-                className={cn(
-                  "inline-flex min-h-[44px] items-center rounded px-4 text-sm font-medium capitalize",
-                  view === v
-                    ? "bg-[#006BFF]/10 text-[#006BFF]"
-                    : "text-muted-foreground"
-                )}
-              >
-                {v}
-              </button>
-            ))}
-          </div>
+      </div>
+
+      <div className="grid grid-cols-1 items-start gap-4 xl:grid-cols-[260px_minmax(0,1fr)_340px]">
+        <div className="space-y-3 rounded-lg border bg-card p-4">
+          <Input
+            aria-label="Search deadlines"
+            placeholder="Search meetings"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+          <Select
+            aria-label="Filter by type"
+            value={typeFilter}
+            onChange={(e) =>
+              setTypeFilter(e.target.value as "all" | DeadlineType)
+            }
+            options={[
+              { value: "all", label: "All Users & Teams" },
+              ...DEADLINE_TYPE_OPTIONS,
+            ]}
+          />
           <Button
-            className="min-h-[44px]"
+            variant="outline"
+            className="h-[44px] w-full"
+            disabled={filtered.length === 0}
+            onClick={handleExport}
+          >
+            Export meetings
+          </Button>
+          <Button
+            className="h-[44px] w-full"
             onClick={() => setShowForm((s) => !s)}
             aria-expanded={showForm}
           >
             {showForm ? "Close" : "New deadline"}
           </Button>
+          {showForm ? (
+            <div className="border-t pt-3">
+              <DeadlineForm
+                onSubmit={(input) => {
+                  add(input);
+                  setShowForm(false);
+                }}
+              />
+            </div>
+          ) : null}
+          <div className="space-y-2 border-t pt-3">
+            {[
+              { label: "All deadlines", count: deadlines.length },
+              { label: "Due soon", count: dueSoon.length },
+              { label: "Overdue", count: overdue.length },
+            ].map((s) => (
+              <div
+                key={s.label}
+                className="flex items-center justify-between text-sm"
+              >
+                <span className="text-muted-foreground">{s.label}</span>
+                <Badge variant="secondary">{hydrated ? s.count : "–"}</Badge>
+              </div>
+            ))}
+          </div>
+          {(query || typeFilter !== "all" || dayFilter) && (
+            <button
+              type="button"
+              onClick={clearFilters}
+              className="inline-flex h-[44px] items-center text-sm font-medium text-[#006BFF] underline-offset-4 hover:underline"
+            >
+              Clear search and filters
+            </button>
+          )}
         </div>
-        {showForm ? (
-          <div className="mt-3 border-t pt-3">
-            <DeadlineForm
-              onSubmit={(input) => {
-                add(input);
-                setShowForm(false);
-              }}
+
+        <div className="min-w-0 space-y-4">
+          {!hydrated ? (
+            <p className="text-sm text-muted-foreground">Loading…</p>
+          ) : view === "calendar" ? (
+            <>
+              <CalendarWeek
+                deadlines={filtered}
+                selectedDayIso={dayFilter}
+                onSelectDay={setDayFilter}
+                selectedId={selectedId}
+                onSelectDeadline={(id) => setSelectedId(id)}
+              />
+              {dayFilter ? (
+                <ScheduleList
+                  deadlines={filtered}
+                  selectedId={selectedId}
+                  onSelect={(id) =>
+                    setSelectedId((s) => (s === id ? s : id))
+                  }
+                  dayFilter={dayFilter}
+                />
+              ) : null}
+            </>
+          ) : (
+            <ScheduleList
+              deadlines={filtered}
+              selectedId={selectedId}
+              onSelect={(id) => setSelectedId((s) => (s === id ? s : id))}
             />
-          </div>
-        ) : null}
-      </div>
+          )}
 
-      <div className="grid grid-cols-3 gap-2">
-        {[
-          { label: "All deadlines", count: deadlines.length },
-          { label: "Due soon", count: dueSoon.length },
-          { label: "Overdue", count: overdue.length },
-        ].map((s) => (
-          <div
-            key={s.label}
-            className="rounded-lg border bg-card p-3 text-center"
-          >
-            <p className="text-xl font-bold">{hydrated ? s.count : "–"}</p>
-            <p className="text-xs text-muted-foreground">{s.label}</p>
-          </div>
-        ))}
-      </div>
+          {hydrated && filtered.length === 0 && deadlines.length > 0 ? (
+            <div className="rounded-lg border border-dashed p-6 text-center">
+              <p className="text-sm font-medium">No matches</p>
+              <button
+                type="button"
+                className="mt-1 inline-flex h-[44px] items-center text-sm text-[#006BFF] underline-offset-4 hover:underline"
+                onClick={clearFilters}
+              >
+                Clear search and filters
+              </button>
+            </div>
+          ) : null}
+        </div>
 
-      {!hydrated ? (
-        <p className="text-sm text-muted-foreground">Loading…</p>
-      ) : view === "calendar" ? (
-        <CalendarWeek
-          deadlines={filtered}
-          selectedDayIso={dayFilter}
-          onSelectDay={setDayFilter}
-          selectedId={selectedId}
-          onSelectDeadline={(id) => setSelectedId(id)}
-        />
-      ) : null}
-
-      {hydrated && (view === "list" || (view === "calendar" && dayFilter)) ? (
-        <div
-          className={
-            selected && view === "list"
-              ? "grid grid-cols-1 gap-4 lg:grid-cols-[1fr_320px]"
-              : "space-y-4"
-          }
-        >
-          <ScheduleList
-            deadlines={filtered}
-            selectedId={selectedId}
-            onSelect={(id) =>
-              setSelectedId((s) => (s === id ? s : id))
-            }
-            dayFilter={view === "calendar" ? dayFilter : null}
-          />
-          {selected && view === "list" ? (
+        <div className="xl:sticky xl:top-6">
+          {selected ? (
             <DeadlineDetail
               deadline={selected}
               hackathonId={hackathonId}
@@ -201,39 +229,16 @@ export function ScheduleView({
               }}
               onClose={() => setSelectedId(null)}
             />
-          ) : null}
+          ) : (
+            <div className="hidden rounded-lg border border-dashed p-6 text-center xl:block">
+              <p className="text-sm font-medium">No deadline selected</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Select a day or a card to see details, reschedule, or edit.
+              </p>
+            </div>
+          )}
         </div>
-      ) : null}
-
-      {hydrated && view === "calendar" && selected && !dayFilter ? (
-        <DeadlineDetail
-          deadline={selected}
-          hackathonId={hackathonId}
-          onSave={(id, patch) => update(id, patch)}
-          onDelete={(id) => {
-            remove(id);
-            setSelectedId(null);
-          }}
-          onClose={() => setSelectedId(null)}
-        />
-      ) : null}
-
-      {hydrated && filtered.length === 0 && deadlines.length > 0 ? (
-        <p className="text-sm text-muted-foreground">
-          No matches.{" "}
-          <button
-            type="button"
-            className="inline-flex min-h-[44px] items-center text-[#006BFF] underline-offset-4 hover:underline"
-            onClick={() => {
-              setQuery("");
-              setTypeFilter("all");
-              setDayFilter(null);
-            }}
-          >
-            Clear search and filters
-          </button>
-        </p>
-      ) : null}
+      </div>
 
       {hydrated ? (
         <p className="flex items-center gap-2 text-sm text-muted-foreground">

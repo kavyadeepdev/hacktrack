@@ -27,26 +27,32 @@ reference screens: week-grid picker (Image 1), grouped list + detail panel
   only (`CalendarDays`, `List`, `Search`, `Download`, `Pencil`,
   `Trash2`, `X`, `ChevronLeft/Right`, `Clock`).
 
-## Layout patterns
+## Layout patterns (desktop-first)
+
+> Override note: this spec intentionally departs from the repo-wide
+> mobile-first rule for the Track B workspace — base styles target the
+> desktop 3-pane frame below, with stacking fallbacks under `lg`/`xl`
+> (not a 360px-first flow). The global app shell (bottom nav era) is
+> out of Track B scope; see the handoff issue for Track A.
 
 ### Shell (`src/app/workspace/[hackathonId]/layout.tsx`)
-- Center column `mx-auto w-full max-w-2xl px-4 py-6`, `space-y-4/6`.
-- Top: plain-`<a>` back-links (`← Back to hackathon`, `Timeline`) per the
+- Full-width app frame `max-w-[1400px]`, `px-6 py-6`.
+- Plain-`<a>` back-links (`← Back to hackathon`, `Timeline`) per the
   cross-cutting flow (no shared layout edits).
-- Title block: `h1` + one-line `text-sm text-muted-foreground` description.
-- Tab bar: horizontal scroll row of underline tabs (Overview / Schedule /
-  Resources / Submissions / Outcomes / Ideate), active tab primary-blue
-  underline + `font-semibold`; each tab `min-h-[44px]`.
-- Below tabs: `ReminderBanner` (when any deadline is overdue/due-soon).
+- Left section rail (`w-60`, icon + label rows like screenshots 2–3:
+  Overview, Schedule, Resources, Submissions, Outcomes, Ideate), sticky,
+  active row `bg-[#006BFF]/10 text-[#006BFF] rounded-lg`; collapses to the
+  horizontal underline tab bar below `lg`.
+- Title block lives atop the rail on desktop, above content on mobile.
 
 ### Overview (`schedule/page.tsx`)
-- Toolbar card: search input (`Search meetings` placeholder pattern),
-  type-filter `Select` (All + 5 deadline types), view switcher
-  (Calendar | List segmented buttons), Export `.ics` outline button.
-- Stats strip: `All deadlines / Due soon / Overdue` counts as small cards.
-- Content: calendar week-grid OR grouped list (client state, default list
-  on mobile, calendar on `sm:`+ only if it fits — both always available
-  via the switcher).
+- Header row: `Schedule` title left, Calendar | List segmented switcher
+  right.
+- 3-pane grid `xl:grid-cols-[260px_minmax(0,1fr)_340px]`: left control
+  rail (search, type filter, Export meetings, New deadline, stat rows),
+  center calendar/list, right sticky detail panel (dashed
+  `No deadline selected` placeholder when empty).
+- Below `xl` the panes stack: rail, center, detail.
 
 ### Calendar view (`calendar-week.tsx`, Image 1)
 - Header: `< ChevronLeft > < Month Year v >`, `Today` pill, `Clear filters`
@@ -101,15 +107,13 @@ reference screens: week-grid picker (Image 1), grouped list + detail panel
   timeline entry; no calendar.
 - Ideate: existing chat UI unchanged, linked from shell tabs.
 
-## Mobile-first behavior
+## Desktop-first behavior
 
-- Base 360px: single column, toolbar stacks (search full-width, filter +
-  view switcher row below), calendar grid horizontally scrollable
-  (`overflow-x-auto`, min column 44px), detail panel renders as stacked
-  section under the list with an `X` that clears `selectedId`.
-- `sm:`: toolbar single row, two-column stats, tab bar fits without scroll.
-- `lg:` (within `max-w-2xl` shell, only where space allows): list +
-  detail side-by-side (`grid-cols-[1fr_320px]`); otherwise stacked.
+- Base = desktop 3-pane frame (left rail 240px, fluid center, right
+  detail 340px sticky). Fallbacks, not first-class flows: below `xl`
+  schedule panes stack; below `lg` the rail becomes the horizontal tab
+  bar; the calendar grid scrolls horizontally (`min-w-[720px]`) on
+  narrow screens.
 - Touch targets ≥ 44px; focus-visible rings on all buttons/links/inputs;
   `aria-pressed` on day cells and view switcher; `role="alert"` stays on
   `ReminderBanner`.

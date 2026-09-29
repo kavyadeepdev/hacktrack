@@ -56,6 +56,10 @@ tracker UI (`src/app/hackathons/**`, `src/components/hackathon/*`,
   `src/app/api/teams/[teamId]/invite/route.ts` issues/rotates codes,
   `src/lib/teams/invites.ts` validates + expires them,
   `team_invites` + `access_audit` tables record joins and role changes.
+- [ ] **A10 — Global desktop app shell (PAY-32).** Calendly-style left
+  sidebar + full-width content frame app-wide (Track B already ships the
+  workspace-local 3-pane shell). Owned files: `src/app/layout.tsx`,
+  `src/components/layout/*`. Owner: Shrihari, branch `person/shrihari`.
 
 ## Track B — Kavyadeep (`track-b`, branch `person/kavyadeep`)
 

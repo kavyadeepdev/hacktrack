@@ -67,7 +67,7 @@ export default function WorkspaceOverviewPage({
         ))}
       </div>
 
-      <ul className="space-y-2">
+      <ul className="grid grid-cols-1 gap-2 md:grid-cols-2">
         {sections.map((s) => (
           <li key={s.href}>
             <Link
