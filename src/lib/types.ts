@@ -43,6 +43,7 @@ export interface Hackathon {
   repoUrl?: string | null;
   notes?: string | null;
   learnings?: string | null;
+  paymentConfirmed?: boolean | null;
   createdAt: string; // ISO
   updatedAt: string; // ISO
 }

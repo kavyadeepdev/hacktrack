@@ -7,14 +7,24 @@ import { StatsStrip } from "@/components/hackathon/stats-strip";
 import { StatusBadge } from "@/components/hackathon/status-badge";
 import { useHackathons } from "@/lib/store";
 
+const PIPELINE = ["reviewing", "planning_to_apply", "applied", "accepted"];
+
 export default function Home() {
   const { hackathons, hydrated } = useHackathons();
+
   const upcoming = [...hackathons]
-    .filter((h) => ["reviewing", "planning_to_apply", "applied", "accepted"].includes(h.status))
-    .sort((a, b) => (a.startDate ?? "").localeCompare(b.startDate ?? ""))
+    .filter((h) => PIPELINE.includes(h.status))
+    .sort((a, b) => {
+      if (!a.startDate && !b.startDate) return 0;
+      if (!a.startDate) return 1;
+      if (!b.startDate) return -1;
+      return a.startDate.localeCompare(b.startDate);
+    })
     .slice(0, 3);
-  const recentResults = hackathons
+
+  const recentResults = [...hackathons]
     .filter((h) => h.status === "attended")
+    .sort((a, b) => (b.updatedAt ?? "").localeCompare(a.updatedAt ?? ""))
     .slice(0, 3);
 
   return (
@@ -31,9 +41,12 @@ export default function Home() {
       {hydrated && <StatsStrip hackathons={hackathons} />}
 
       <section className="space-y-3">
-        <div className="flex items-center justify-between">
+        <div className="flex min-h-[44px] items-center justify-between">
           <h2 className="text-base font-semibold">Up next</h2>
-          <Link href="/hackathons" className="text-sm font-medium underline">
+          <Link
+            href="/hackathons"
+            className="inline-flex min-h-[44px] items-center text-sm font-medium underline"
+          >
             View all
           </Link>
         </div>
@@ -57,9 +70,17 @@ export default function Home() {
         )}
       </section>
 
-      {recentResults.length > 0 && (
+      {hydrated && recentResults.length > 0 && (
         <section className="space-y-3">
-          <h2 className="text-base font-semibold">Recent results</h2>
+          <div className="flex min-h-[44px] items-center justify-between">
+            <h2 className="text-base font-semibold">Recent results</h2>
+            <Link
+              href="/timeline"
+              className="inline-flex min-h-[44px] items-center text-sm font-medium underline"
+            >
+              Timeline
+            </Link>
+          </div>
           <div className="space-y-2">
             {recentResults.map((h) => (
               <HackathonCard key={h.id} hackathon={h} />
