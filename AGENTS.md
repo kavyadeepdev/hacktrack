@@ -22,7 +22,25 @@ Drizzle, Vercel hosting, GitHub version control.
 - Domain: `src/lib/types.ts` + `constants.ts` + `store.ts` (localStorage
   MVP) + `seed.ts`; DB: `src/db/schema.ts` + `client.ts`
 - Docs: `docs/` (start at `docs/README.md`); CLI skills:
-  `.agents/skills/{neon-cli,vercel-cli,github-cli}/SKILL.md`
+  `.agents/skills/{neon-cli,vercel-cli,github-cli,linear-cli}/SKILL.md`
+
+## Team workflow (mandatory for every feature task)
+
+1. BEFORE writing any code, pull your issue from Linear
+   (`linear issue mine` / `linear issue view <id>` — see `docs/linear.md`).
+   The issue description lists the ONLY files you may touch
+   (`track-a` → Shrihari, `track-b` → Kavyadeep). Anything outside it —
+   other track's files or FROZEN files (`src/app/layout.tsx`,
+   `src/components/ui/*`, `src/lib/utils.ts`, `src/db/client.ts`, configs)
+   is off-limits: stop and comment on the issue instead.
+2. Implement the feature as described in `docs/features.md` (same ID).
+3. AFTER implementing, in the SAME PR/commit:
+   - Flip its box to `[x]` in `docs/features.md` (only your own rows).
+   - Move the Linear issue to Done: `linear issue update <id> -s Done`.
+4. Adding a NEW set of features: update `docs/features.md` first, then
+   split into Linear issues (assignee + label + allowed files) per
+   `docs/linear.md#adding-a-new-set-of-features`. `docs/features.md`
+   (WHAT) and Linear (WHO + allowed files) are the sources of truth.
 
 ## Rules
 
